@@ -5,11 +5,13 @@ const mongoose = require('mongoose');
  * @property {string} name - Student name
  * @property {string} batch - Batch
  * @property {string} email - Email of student
- * @property {string} encryptedPassword - Password of student 
+ * @property {string} encryptedPassword - Password of student
  * @property {string} department - department of student
  * @property {number} roll - roll number of student
  * @property {number} year - year of admission
  * @property {boolean} changePasswordScreen - check if we should show change pwd screen or not
+ * @property {boolean} status - check if we should show change pwd screen or not
+ * @property {string} deviceId - check if we should show change pwd screen or not
  */
 
 const StudentSchema = new mongoose.Schema({
@@ -41,7 +43,14 @@ const StudentSchema = new mongoose.Schema({
   },
   changePasswordScreen: {
     type: Boolean,
-    required: true,
+    default: false,
+  },
+  status: {
+    type: Boolean,
+    default: false,
+  },
+  deviceId: {
+    type: String,
   },
 });
 
