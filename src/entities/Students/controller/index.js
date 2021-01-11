@@ -2,12 +2,12 @@
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
-const { STUDENT_REGISTERED } = require('../../config/constants');
+const { STUDENT_REGISTERED } = require('../../../config/constants');
 const { Student } = require('../model');
-const parseEmail = require('../../Util/parseEmail');
-const push = require('../../Util/push');
-const randomString = require('../../Util/randomString');
-const sendMail = require('../../Util/sendMail');
+const parseEmail = require('../../../Util/parseEmail');
+const push = require('../../../Util/push');
+const randomString = require('../../../Util/randomString');
+const sendMail = require('../../../Util/sendMail');
 require('dotenv').config();
 
 async function register(req, res) {
@@ -72,6 +72,9 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
+  // 11it24@quest.edu.pk
+  // uvbf84i4
+  //
   // login code
   try {
     console.log('calling login function');
@@ -81,6 +84,9 @@ async function login(req, res) {
     }
     if (_.isUndefined(body.password)) {
       return res.json({ status: false, data: [], message: 'password is required.' });
+    }
+    if (_.isUndefined(body.deviceId)) {
+      return res.json({ status: false, data: [], message: 'deviceId is required.' });
     }
     Student.findOne({ email: body.email })
       .then((student) => {
@@ -100,8 +106,10 @@ async function login(req, res) {
               userId: student.id,
               email: student.email,
             };
-            const accessToken = jwt.sign(payload, 'supersecretpassword');
-            return res.json({ status: true, data: { ...student._doc, accessToken }, message: 'Login success.' });
+            const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: '15s' });
+            const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
+            // Student.update();
+            return res.json({ status: true, data: { ...student._doc, accessToken, refreshToken }, message: 'Login success.' });
           }
           return res.json({ status: false, data: [], message: 'pass incorrect' });
         });
@@ -120,11 +128,11 @@ async function login(req, res) {
   return false;
 }
 
-function profile(req, res){
-  return res.json({status: true, data: [], message: 'profile'});
+function profile(req, res) {
+  return res.json({ status: true, data: req.user, message: 'profile' });
 }
 module.exports = {
   register,
   login,
-  profile
+  profile,
 };
