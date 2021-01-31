@@ -13,6 +13,7 @@ const host = process.env.HOST || 'http://localhost'; // process.env ✓
 
 const run = async () => {
   mongoose.connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true });
+  mongoose.set('useFindAndModify', false);
   const admin = new AdminBro(options);
   const router = buildAdminRouter(admin);
   app.use(options.rootPath, router);

@@ -4,6 +4,7 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const { STUDENT_REGISTERED } = require('../../../config/constants');
 const { Student } = require('../model');
+const { Token } = require('../../Token/model');
 const parseEmail = require('../../../Util/parseEmail');
 const push = require('../../../Util/push');
 const randomString = require('../../../Util/randomString');
@@ -38,6 +39,7 @@ async function register(req, res) {
     objStudent.roll = parsedEmail.roll;
     objStudent.year = parsedEmail.year;
     objStudent.department = parsedEmail.department;
+    objStudent.deviceId = parsedEmail.deviceId || 'asf';
     //   save the student and check for errors
     const isSaved = await objStudent.save();
     console.log('Data saved');
@@ -79,6 +81,7 @@ async function login(req, res) {
   try {
     console.log('calling login function');
     const { body } = req;
+    // console.log({body});
     if (_.isUndefined(body.email)) {
       return res.json({ status: false, data: [], message: 'email is required.' });
     }
@@ -94,7 +97,7 @@ async function login(req, res) {
           return res.json({ status: false, data: [], message: 'that email is not registered' });
         }
         // match pass
-        bcrypt.compare(body.password, student.encryptedPassword, (err, isMatch) => {
+        bcrypt.compare(body.password, student.encryptedPassword, async (err, isMatch) => {
           if (err) {
             console.error('error login');
             console.error(err);
@@ -106,8 +109,18 @@ async function login(req, res) {
               userId: student.id,
               email: student.email,
             };
-            const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: '15s' });
+            const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN,
+              {
+                expiresIn: process.env.TOKEN_EXPIRE,
+              });
             const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
+            const _student = student;
+            _student.deviceId = body.deviceId;
+            await _student.save();
+            const _token = new Token(); // create a new instance of the student model
+            _token.token = refreshToken;
+            _token.user_id = student.id;
+            await _token.save();
             // Student.update();
             return res.json({ status: true, data: { ...student._doc, accessToken, refreshToken }, message: 'Login success.' });
           }
@@ -129,10 +142,30 @@ async function login(req, res) {
 }
 
 function profile(req, res) {
+  console.log('calling profile');
   return res.json({ status: true, data: req.user, message: 'profile' });
+}
+
+function newToken(req, res) {
+  console.log('fetching new token');
+  const { token } = req.body;
+  jwt.verify(token, process.env.REFRESH_TOKEN, (err, user) => {
+    if (err) return res.sendStatus(401);
+    const payload = {
+      userId: user.userId,
+      email: user.email,
+    };
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN,
+      {
+        expiresIn: process.env.TOKEN_EXPIRE,
+      });
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
+    return res.json({ status: true, data: { accessToken, refreshToken }, message: '' });
+  });
 }
 module.exports = {
   register,
   login,
   profile,
+  newToken,
 };
