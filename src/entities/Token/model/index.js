@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
  * Student Object
  * @typedef {Object} Token
  * @property {string} token
- * @property {number} user_id
+ * @property {string} user_id
  */
 
 const TokenSchema = new mongoose.Schema({
