@@ -17,18 +17,19 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 module.exports = {
-  sendNotification: (title, body, data = '', type = 'notice', silent = 'false') => {
-    const topic = type;
-
+  sendNotification: (title, body, data = '', type = 'notice', deviceId) => {
     const message = {
+
+      token: deviceId,
+      notification: {
+        title,
+        body,
+      },
       data: {
         title,
         body,
-        data,
-        type,
-        silent,
+        extraData: data,
       },
-      topic,
     };
 
     // Send a message to devices subscribed to the provided topic.

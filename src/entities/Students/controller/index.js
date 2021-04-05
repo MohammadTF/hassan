@@ -73,6 +73,20 @@ async function register(req, res) {
   }
 }
 
+async function checkPwd(password, secondPassword) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, secondPassword, async (err, isMatch) => {
+      if (err) {
+        console.error('error login');
+        console.error(err);
+        return reject(err);
+      }
+
+      return resolve(isMatch);
+    });
+  });
+}
+
 async function login(req, res) {
   // 11it24@quest.edu.pk
   // uvbf84i4
@@ -91,46 +105,35 @@ async function login(req, res) {
     if (_.isUndefined(body.deviceId)) {
       return res.json({ status: false, data: [], message: 'deviceId is required.' });
     }
-    Student.findOne({ email: body.email })
-      .then((student) => {
-        if (!student) {
-          return res.json({ status: false, data: [], message: 'that email is not registered' });
-        }
-        // match pass
-        bcrypt.compare(body.password, student.encryptedPassword, async (err, isMatch) => {
-          if (err) {
-            console.error('error login');
-            console.error(err);
-            return res.json({ status: false, data: [], message: 'server error' });
-          }
+    const student = await Student.findOne({ email: body.email });
 
-          if (isMatch) {
-            const payload = {
-              userId: student.id,
-              email: student.email,
-            };
-            const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN,
-              {
-                expiresIn: process.env.TOKEN_EXPIRE,
-              });
-            const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
-            const _student = student;
-            _student.deviceId = body.deviceId;
-            await _student.save();
-            const _token = new Token(); // create a new instance of the student model
-            _token.token = refreshToken;
-            _token.user_id = student.id;
-            await _token.save();
-            // Student.update();
-            return res.json({ status: true, data: { ...student._doc, accessToken, refreshToken }, message: 'Login success.' });
-          }
-          return res.json({ status: false, data: [], message: 'pass incorrect' });
+    if (!student) {
+      return res.json({ status: false, data: [], message: 'that email is not registered' });
+    }
+    // match pass
+    const isMatch = checkPwd(body.password, student.encryptedPassword);
+
+    if (isMatch) {
+      const payload = {
+        userId: student.id,
+        email: student.email,
+      };
+      const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN,
+        {
+          expiresIn: process.env.TOKEN_EXPIRE,
         });
-      })
-      .catch((err) => {
-        console.error(err);
-        return res.json({ status: false, data: [], message: 'server error' });
-      });
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
+      const _student = student;
+      _student.deviceId = body.deviceId;
+      await _student.save();
+      const _token = new Token(); // create a new instance of the student model
+      _token.token = refreshToken;
+      _token.user = student.id; // .toString();
+      await _token.save();
+      // Student.update();
+      return res.json({ status: true, data: { ...student._doc, accessToken, refreshToken }, message: 'Login success.' });
+    }
+    return res.json({ status: false, data: [], message: 'pass incorrect' });
   } catch (e) {
     console.error('error calling student login');
     console.error(e);
@@ -149,8 +152,12 @@ function profile(req, res) {
 function newToken(req, res) {
   console.log('fetching new token');
   const { token } = req.body;
+  console.log('token', token);
   jwt.verify(token, process.env.REFRESH_TOKEN, (err, user) => {
-    if (err) return res.sendStatus(401);
+    if (err) {
+      console.error({error_refresh_token: err});
+      return res.sendStatus(401);
+    }
     const payload = {
       userId: user.userId,
       email: user.email,

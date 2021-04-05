@@ -1,7 +1,9 @@
 const express = require('express');
 
 const router = express.Router();
-const { register, login, profile, newToken } = require('../entities/Students/controller');
+const {
+  register, login, profile, newToken,
+} = require('../entities/Students/controller');
 const authJwt = require('../Middleware/authJwt');
 
 // middleware that is specific to this router
