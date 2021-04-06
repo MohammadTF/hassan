@@ -110,6 +110,10 @@ async function login(req, res) {
     if (!student) {
       return res.json({ status: false, data: [], message: 'that email is not registered' });
     }
+
+    if (!student.status) {
+      return res.json({ status: false, data: [], message: 'Your account is not active.' });
+    }
     // match pass
     const isMatch = checkPwd(body.password, student.encryptedPassword);
 
