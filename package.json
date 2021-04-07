@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@admin-bro/express": "^3.0.1",
+    "@sendgrid/mail": "^7.4.2",
     "admin-bro": "^3.3.1",
     "admin-bro-expressjs": "^2.1.1",
     "admin-bro-mongoose": "^0.5.2",

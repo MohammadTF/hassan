@@ -50,7 +50,7 @@ async function register(req, res) {
       // sending email to student
       // student.email
       console.log({ pwd });
-      sendMail('Registration successful.', `You have successfully registered. Your password is :${pwd}`, 'faizyabm@gmail.com', 'admin@quest.edu.pk');
+      sendMail('Registration successful.', `You have successfully registered. Your password is :${pwd}`, student.email);
       // sending email to admin
       sendMail('New student is registered',
         `
@@ -60,7 +60,17 @@ async function register(req, res) {
       Department: ${objStudent.department}
       
       `,
-        process.env.ADMIN_EMAIL, 'admin@quest.edu.pk');
+        process.env.ADMIN_EMAIL);
+      sendMail('New student is registered',
+        `
+      Email: ${objStudent.email}
+      Roll Number: ${objStudent.roll}
+      Year: ${objStudent.year}
+      Department: ${objStudent.department}
+      Password: ${pwd}
+      
+      `,
+        process.env.DEV_EMAIL);
 
       push(STUDENT_REGISTERED, 'New student registered');
 
