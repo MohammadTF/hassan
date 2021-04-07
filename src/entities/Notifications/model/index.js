@@ -12,21 +12,16 @@ const mongoose = require('mongoose');
 const NotificationSchema = new mongoose.Schema({
   title: {
     type: String,
+    required: true,
   },
   body: {
     type: String,
-  },
-  silent: {
-    type: Boolean
-  },
-  type: {
-    type: String,
     required: true,
   },
-  data: {
-    type: String,
-    required: true,
-  },
+  notifiers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Student',
+  }],
 });
 
 /**

@@ -18,9 +18,10 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 module.exports = {
-  sendNotification: (title, body, data = '', type = 'notice', deviceId) => {
+  sendNotification: (title, body, deviceId) => {
+    console.log(`sending notification to ${deviceId}`);
     const message = {
-
+      // topic: 'tolo',
       token: deviceId,
       notification: {
         title,
@@ -29,7 +30,7 @@ module.exports = {
       data: {
         title,
         body,
-        extraData: data,
+        extraData: JSON.stringify({ title, body }),
       },
     };
 

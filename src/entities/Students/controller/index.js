@@ -21,6 +21,7 @@ async function register(req, res) {
     console.log({ student: req.body });
     // check if request has email
     if (_.isUndefined(student.email)) return res.json({ status: false, data: [], message: 'Email is required.' });
+    if (_.isUndefined(student.name)) return res.json({ status: false, data: [], message: 'Name is required.' });
     // run email parser on input email
     const parsedEmail = parseEmail(student.email);
     // check if email successfully parsed
@@ -35,6 +36,7 @@ async function register(req, res) {
      */
     const objStudent = new Student(); // create a new instance of the student model
     objStudent.email = student.email;
+    objStudent.name = student.name;
     objStudent.encryptedPassword = bcrypt.hashSync(pwd, 10);
     objStudent.roll = parsedEmail.roll;
     objStudent.year = parsedEmail.year;

@@ -52,6 +52,10 @@ const StudentSchema = new mongoose.Schema({
   deviceId: {
     type: String,
   },
+  notifications: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Notification'
+  }]
 });
 
 /**

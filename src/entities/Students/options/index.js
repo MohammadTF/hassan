@@ -4,6 +4,9 @@ const { Student } = require('../model');
 /** @type {AdminBro.ResourceOptions} */
 const options = {};
 options.properties = {
+  notifications: {
+    isVisible: false,
+  },
   encryptedPassword: {
     isVisible: false,
   },
