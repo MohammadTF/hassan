@@ -18,6 +18,9 @@ const NotificationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+  },
   notifiers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Student',

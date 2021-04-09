@@ -10,6 +10,9 @@ options.properties = {
   encryptedPassword: {
     isVisible: false,
   },
+  deviceId:{
+    isVisible: false,
+  }
 };
 
 options.actions = {

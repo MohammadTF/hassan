@@ -13,12 +13,11 @@ const serviceAccount = {
   auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
   client_x509_cert_url: process.env.CERT_URL,
 };
-console.log(serviceAccount)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 module.exports = {
-  sendNotification: (title, body, deviceId) => {
+  sendNotification: (title, body, deviceId, image = '') => {
     console.log(`sending notification to ${deviceId}`);
     const message = {
       // topic: 'tolo',
@@ -30,7 +29,7 @@ module.exports = {
       data: {
         title,
         body,
-        extraData: JSON.stringify({ title, body }),
+        image
       },
     };
 
