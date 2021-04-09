@@ -54,8 +54,12 @@ const StudentSchema = new mongoose.Schema({
   },
   notifications: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Notification'
-  }]
+    ref: 'Notification',
+  }],
+  documents: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Documents',
+  }],
 });
 
 /**

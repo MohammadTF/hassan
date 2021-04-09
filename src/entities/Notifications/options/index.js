@@ -47,6 +47,7 @@ options.properties = {
   image: {
     components: {
       edit: AdminBro.bundle('../components/image.edit.jsx'),
+      show: AdminBro.bundle('../components/image.list.jsx'),
       list: AdminBro.bundle('../components/image.list.jsx')
     },
   },
