@@ -30,7 +30,7 @@ const buildAdminRouter = (admin) => {
   null,
   {
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
   });
   return router;

@@ -13,7 +13,14 @@ const options = {
   rootPath: '/admin',
   branding: {
     companyName: 'Student Portal',
-    softwareBrothers: true,
+    logo: 'https://res.cloudinary.com/dmv8gen17/image/upload/v1618037782/DNMS_LOGO_stmhw1.png',
+    softwareBrothers: false,
+  },
+  dashboard: {
+    handler: async () => {
+      return { some: 'output' }
+    },
+    component: AdminBro.bundle('./components/my-dashboard-component')
   },
 };
 
