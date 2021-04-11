@@ -151,6 +151,7 @@ async function login(req, res) {
         console.log('getting notifications and docs');
       const documents = await Documents.find({student: student.id});
       const notifications = await Notification.find({notifiers: student.id});
+      console.log({documents, notifications, id: student.id})
       // Student.update();
       return res.json({ status: true, data: { ...student._doc, documents: documents._doc, notifications: notifications._doc, accessToken, refreshToken }, message: 'Login success.' });
     }
