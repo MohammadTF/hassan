@@ -4,6 +4,8 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const { STUDENT_REGISTERED } = require('../../../config/constants');
 const { Student } = require('../model');
+const { Documents } = require('../../Documents/model');
+const { Notification } = require('../../Notifications/model');
 const { Token } = require('../../Token/model');
 const parseEmail = require('../../../Util/parseEmail');
 const push = require('../../../Util/push');
@@ -146,8 +148,11 @@ async function login(req, res) {
       _token.token = refreshToken;
       _token.user = student.id; // .toString();
       await _token.save();
+
+      const documents = await Documents.findOne({student: student.id});
+      const notifications = await Notification.findOne({notifiers: student.id});
       // Student.update();
-      return res.json({ status: true, data: { ...student._doc, accessToken, refreshToken }, message: 'Login success.' });
+      return res.json({ status: true, data: { ...student._doc, documents: documents._doc, notifications: notifications._doc, accessToken, refreshToken }, message: 'Login success.' });
     }
     return res.json({ status: false, data: [], message: 'pass incorrect' });
   } catch (e) {
