@@ -148,7 +148,7 @@ async function login(req, res) {
       _token.token = refreshToken;
       _token.user = student.id; // .toString();
       await _token.save();
-
+        console.log('getting notifications and docs');
       const documents = await Documents.find({student: student.id});
       const notifications = await Notification.find({notifiers: student.id});
       // Student.update();
