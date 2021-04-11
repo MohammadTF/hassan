@@ -149,8 +149,8 @@ async function login(req, res) {
       _token.user = student.id; // .toString();
       await _token.save();
 
-      const documents = await Documents.findOne({student: student.id});
-      const notifications = await Notification.findOne({notifiers: student.id});
+      const documents = await Documents.find({student: student.id});
+      const notifications = await Notification.find({notifiers: student.id});
       // Student.update();
       return res.json({ status: true, data: { ...student._doc, documents: documents._doc, notifications: notifications._doc, accessToken, refreshToken }, message: 'Login success.' });
     }
