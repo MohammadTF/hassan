@@ -153,7 +153,7 @@ async function login(req, res) {
       const notifications = await Notification.find({notifiers: student.id});
       console.log({documents, notifications, id: student.id})
       // Student.update();
-      return res.json({ status: true, data: { ...student._doc, documents: documents._doc, notifications: notifications._doc, accessToken, refreshToken }, message: 'Login success.' });
+      return res.json({ status: true, data: { ...student._doc, documents: documents, notifications: notifications, accessToken, refreshToken }, message: 'Login success.' });
     }
     return res.json({ status: false, data: [], message: 'pass incorrect' });
   } catch (e) {
